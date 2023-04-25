@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("CreditCardRepo")
 public interface CreditCardRepository extends JpaRepository<CreditCard, Integer> {
-    List<CreditCard> findByUserId(int userId);
-    CreditCard findByCardNumber(String number);
+    List<CreditCard> findByUserID(int userID);
+    CreditCard findByNumber(String number);
 }

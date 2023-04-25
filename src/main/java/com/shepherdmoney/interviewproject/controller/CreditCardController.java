@@ -36,6 +36,7 @@ public class CreditCardController {
         //       Return other appropriate response code for other exception cases
         //       Do not worry about validating the card number, assume card number could be any arbitrary format and length
         if(userRepository.existsById(payload.getUserId())) {
+            //if user exists, add the credit card to user and link the credit card to the user through UserID
             CreditCard creditCard = new CreditCard();
             creditCard.setIssuanceBank(payload.getCardIssuanceBank());
             creditCard.setNumber(payload.getCardNumber());
@@ -56,7 +57,7 @@ public class CreditCardController {
     public ResponseEntity<List<CreditCardView>> getAllCardOfUser(@RequestParam int userId) {
         // TODO: return a list of all credit card associated with the given userId, using CreditCardView class
         //       if the user has no credit card, return empty list, never return null
-        List<CreditCard> creditCards = creditCardRepository.findByUserId(userId);
+        List<CreditCard> creditCards = creditCardRepository.findByUserID(userId);
         List<CreditCardView> creditCardViews = creditCards.stream().map(card -> CreditCardView.builder().issuanceBank(card.getIssuanceBank()).number(card.getNumber()).build()).collect(Collectors.toList());
         return ResponseEntity.ok(creditCardViews);
     }
@@ -65,7 +66,7 @@ public class CreditCardController {
     public ResponseEntity<Integer> getUserIdForCreditCard(@RequestParam String creditCardNumber) {
         // TODO: Given a credit card number, efficiently find whether there is a user associated with the credit card
         //       If so, return the user id in a 200 OK response. If no such user exists, return 400 Bad Request
-        CreditCard creditCard = creditCardRepository.findByCardNumber(creditCardNumber);
+        CreditCard creditCard = creditCardRepository.findByNumber(creditCardNumber);
         if (creditCard == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -82,7 +83,7 @@ public class CreditCardController {
         //        is not associated with a card.
         
         for (UpdateBalancePayload transaction : payload) {
-            CreditCard creditCard = creditCardRepository.findByCardNumber(transaction.getCreditCardNumber());
+            CreditCard creditCard = creditCardRepository.findByNumber(transaction.getCreditCardNumber());
             if (creditCard == null) {
                 return ResponseEntity.badRequest().build();
             }
